@@ -6,8 +6,9 @@ public class GeekOutMasters
      * Attributes
      */
     public Dice dice1, dice2, dice3, dice4, dice5, dice6, dice7,dice8 ,dice9,dice10;
-    private int roundCount, roundPoints, totalPoints;
+    private int roundCount, totalPoints, roundPoints;
     private int[] faces;
+    private Dice[] numberOfDice;
 
     public GeekOutMasters()
     {
@@ -24,8 +25,8 @@ public class GeekOutMasters
 
         faces=new int[10];
 
-        roundCount=1;
         roundPoints=0;
+        roundCount=1;
         totalPoints=0;
     }
 
@@ -49,13 +50,18 @@ public class GeekOutMasters
     }
 
 
-    public void game()
+    public void doAction()
     {
-        while(roundCount!=5)
+        for(int i=0; i < numberOfDice.length; i++)
         {
+            if(numberOfDice.length ==1 && numberOfDice[i].getPower()=="dragon")
+            {
+                roundPoints=0;
+            }
+            if(numberOfDice[i].getPower()=="heart")
+            {
 
-
-            roundCount++;
+            }
         }
     }
 

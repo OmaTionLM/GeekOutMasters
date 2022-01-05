@@ -27,43 +27,35 @@ public class Dice
     {
         Random randomNumber  = new Random();
         visibleFace = randomNumber.nextInt(6)+1;
-        switch (statePower)
-        {
-            case 1: if(visibleFace==1)
-            {
-                power="Heart";
-            }
-
-            case 2: if(visibleFace==2)
-            {
-                power="Hero";
-            }
-
-            case 3: if(visibleFace==3)
-            {
-                power="warrior";
-            }
-
-            case 4: if(visibleFace==4)
-            {
-                power="42";
-            }
-
-            case 5: if(visibleFace==5)
-            {
-                power="dragon";
-            }
-
-            case 6: if(visibleFace==6)
-            {
-                power="ship";
-            }
-        }
         return visibleFace;
     }
 
     public String getPower()
     {
+        if(getVisibleFace()==1)
+        {
+            power="42";
+        }
+        if(getVisibleFace()==2)
+        {
+            power="dragon";
+        }
+        if(getVisibleFace()==3)
+        {
+            power="heart";
+        }
+        if(getVisibleFace()==4)
+        {
+            power="hero";
+        }
+        if(getVisibleFace()==5)
+        {
+            power="meeple";
+        }
+        if(getVisibleFace()==6)
+        {
+            power="ship";
+        }
         return power;
     }
 }
