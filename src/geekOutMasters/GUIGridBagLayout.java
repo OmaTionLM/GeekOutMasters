@@ -2,8 +2,7 @@ package geekOutMasters;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 
 /**
  * @author Jeison Perea -  && Alan Valderrama - alan.valderrama@correounivalle.edu.co
@@ -14,9 +13,9 @@ import java.awt.event.ActionListener;
 public class GUIGridBagLayout extends JFrame
 {
 
-    public static final String BEGINNING_MESSAGE="Welcome to Geek Out Masters \n"
+    public static final String BEGINNING_MESSAGE="Welcome to Geek Out Masters\n"
 
-            +"Push the button 'Play' to start the game."
+            +"Push the button 'Play' to start the game (once you press the button, it will be available in the next round).\n"
             +"\nYou have ten dice, your goal is to make as many dice as possible '42' "
             +"using the powers that have randomly come to you."
             +"\nEach face of the dice will have powers, which are:"
@@ -28,14 +27,24 @@ public class GUIGridBagLayout extends JFrame
             +"\nMeeple: Allow you to re-roll another dice in play, that is, from the active dice section. \n"
             +"\nWatch out for the dragon!";
 
-    private Header headerProject;
-    private JLabel dice1, dice2, dice3, dice4, dice5, dice6, dice7,dice8 ,dice9,dice10;
+    /**
+     * Private attributes
+     */
+    //dice1, dice2, dice3, dice4, dice5, dice6, dice7, dice8 , dice9, dice10
+    private JButton[] dice;
     private JButton play, help, exit;
-    private JPanel inactiveDicePanel, diceUsedPanel, yourDicePanel;
     private ImageIcon diceImage;
-    private JTextArea yourScoreMessage;
-    private Listener listener;
     private GeekOutMasters geekOutMasters;
+    private int flagPlay=0, state;
+
+    /**
+     * Public attributes
+     */
+    public Header headerProject;
+    //public JPanel inactiveDicePanel, diceUsedPanel, yourDicePanel;
+    public JPanel[] panelsToUse;
+    public Listener listener;
+    public JTextArea yourScoreMessage;
 
     /**
      * Constructor of GUI class
@@ -70,12 +79,21 @@ public class GUIGridBagLayout extends JFrame
 
         //Set up JComponents
         /**
+         * Panel creation
+         */
+        panelsToUse=new JPanel[3];
+
+        panelsToUse[0]=new JPanel();//This is the inactive dice panel.
+        panelsToUse[1]=new JPanel();//This is the dice used panel.
+        panelsToUse[2]=new JPanel();//this is your dice panel.
+
+        /**
          * Header of interface
          */
         headerProject = new Header("Geek Out Master Table", Color.BLACK);
         constraints.gridx=0;
         constraints.gridy=0;
-        constraints.gridwidth=2;
+        constraints.gridwidth=3;
         constraints.fill=GridBagConstraints.HORIZONTAL;
         this.add(headerProject, constraints);
 
@@ -104,48 +122,63 @@ public class GUIGridBagLayout extends JFrame
         this.add(exit, constraints);
 
         /**
+         * Creation of the dice buttons
+         */
+        dice=new JButton[10];
+
+        dice[0]=new JButton();
+        dice[1]=new JButton();
+        dice[2]=new JButton();
+        dice[3]=new JButton();
+        dice[4]=new JButton();
+        dice[5]=new JButton();
+        dice[6]=new JButton();
+        dice[7]=new JButton();
+        dice[8]=new JButton();
+        dice[9]=new JButton();
+
+        /**
          * Initial image of the dice
          */
         diceImage=new ImageIcon(getClass().getResource("/resources/1.jpg"));
-        dice1=new JLabel(diceImage);
-        dice2=new JLabel(diceImage);
-        dice3=new JLabel(diceImage);
-        dice4=new JLabel(diceImage);
-        dice5=new JLabel(diceImage);
-        dice6=new JLabel(diceImage);
-        dice7=new JLabel(diceImage);
-        dice8=new JLabel(diceImage);
-        dice9=new JLabel(diceImage);
-        dice10=new JLabel(diceImage);
+        dice[0].setIcon(diceImage);
+        dice[1].setIcon(diceImage);
+        dice[2].setIcon(diceImage);
+        dice[3].setIcon(diceImage);
+        dice[4].setIcon(diceImage);
+        dice[5].setIcon(diceImage);
+        dice[6].setIcon(diceImage);
+        dice[7].setIcon(diceImage);
+        dice[8].setIcon(diceImage);
+        dice[9].setIcon(diceImage);
+
+
 
         /**
          * Inactive dice panel
          */
-        inactiveDicePanel=new JPanel();
-        inactiveDicePanel.setPreferredSize(new Dimension(380,300));
-        inactiveDicePanel.setBorder(BorderFactory.createTitledBorder("Inactive Dice."));
-        inactiveDicePanel.add(dice1);
-        inactiveDicePanel.add(dice2);
-        inactiveDicePanel.add(dice3);
+        panelsToUse[0]=new JPanel();//Inactive dice panel
+        panelsToUse[0].setPreferredSize(new Dimension(380,300));
+        panelsToUse[0].setBorder(BorderFactory.createTitledBorder("Inactive Dice."));
         constraints.gridx=0;
         constraints.gridy=2;
         constraints.gridwidth=1;
         constraints.fill=GridBagConstraints.BOTH;
         constraints.anchor=GridBagConstraints.CENTER;
-        add(inactiveDicePanel, constraints);
+        add(panelsToUse[0], constraints);
 
         /**
          * Dice used panel
          */
-        diceUsedPanel=new JPanel();
-        diceUsedPanel.setPreferredSize(new Dimension(600,300));
-        diceUsedPanel.setBorder(BorderFactory.createTitledBorder("Dice Used."));
+        panelsToUse[1]=new JPanel();//Dice used panel
+        panelsToUse[1].setPreferredSize(new Dimension(600,300));
+        panelsToUse[1].setBorder(BorderFactory.createTitledBorder("Dice Used."));
         constraints.gridx=1;
         constraints.gridy=2;
         constraints.gridwidth=1;
         constraints.fill=GridBagConstraints.BOTH;
         constraints.anchor=GridBagConstraints.CENTER;
-        add(diceUsedPanel, constraints);
+        add(panelsToUse[1], constraints);
 
         /**
          * Your score panel
@@ -170,22 +203,25 @@ public class GUIGridBagLayout extends JFrame
         /**
          * Your dice panel
          */
-        yourDicePanel=new JPanel();
-        yourDicePanel.setPreferredSize(new Dimension(600,300));
-        yourDicePanel.setBorder(BorderFactory.createTitledBorder("Your dice."));
-        yourDicePanel.add(dice4);
-        yourDicePanel.add(dice5);
-        yourDicePanel.add(dice6);
-        yourDicePanel.add(dice7);
-        yourDicePanel.add(dice8);
-        yourDicePanel.add(dice9);
-        yourDicePanel.add(dice10);
+        panelsToUse[2]=new JPanel();//Your dice panel
+        panelsToUse[2].setPreferredSize(new Dimension(600,400));
+        panelsToUse[2].setBorder(BorderFactory.createTitledBorder("Your dice."));
+        panelsToUse[2].add(dice[0]);
+        panelsToUse[2].add(dice[1]);
+        panelsToUse[2].add(dice[2]);
+        panelsToUse[2].add(dice[3]);
+        panelsToUse[2].add(dice[4]);
+        panelsToUse[2].add(dice[5]);
+        panelsToUse[2].add(dice[6]);
+        panelsToUse[2].add(dice[7]);
+        panelsToUse[2].add(dice[8]);
+        panelsToUse[2].add(dice[9]);
         constraints.gridx=1;
         constraints.gridy=3;
         constraints.gridwidth=1;
         constraints.fill=GridBagConstraints.NONE;
         constraints.anchor=GridBagConstraints.CENTER;
-        add(yourDicePanel, constraints);
+        add(panelsToUse[2], constraints);
 
         /**
          * Play Button
@@ -221,42 +257,116 @@ public class GUIGridBagLayout extends JFrame
         @Override
         public void actionPerformed(ActionEvent e)
         {
+            //Button to start the game
             if(e.getSource()==play)
             {
+                //adding the dice in inactive dice panel
+                for(int i=0; i < dice.length; i++)
+                {
+                    panelsToUse[2].remove(dice[i]);//Removing of your dice panel
+                    panelsToUse[0].add(dice[i]);//Introducing in inactive dice panel
+                    dice[i].setEnabled(false);
+                    if(i == 2)
+                    {
+                        break;
+                    }
+                }
+                //Add images at the panel
+                flagPlay++;
                 geekOutMasters.determinateFace();
                 int[] faces=geekOutMasters.getFaces();
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[0]+".jpg"));
-                dice1.setIcon(diceImage);
+                dice[0].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[1]+".jpg"));
-                dice2.setIcon(diceImage);
+                dice[1].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[2]+".jpg"));
-                dice3.setIcon(diceImage);
+                dice[2].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[3]+".jpg"));
-                dice4.setIcon(diceImage);
+                dice[3].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[4]+".jpg"));
-                dice5.setIcon(diceImage);
+                dice[4].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[5]+".jpg"));
-                dice6.setIcon(diceImage);
+                dice[5].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[6]+".jpg"));
-                dice7.setIcon(diceImage);
+                dice[6].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[7]+".jpg"));
-                dice8.setIcon(diceImage);
+                dice[7].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[8]+".jpg"));
-                dice9.setIcon(diceImage);
+                dice[8].setIcon(diceImage);
                 diceImage=new ImageIcon(getClass().getResource("/resources/"+faces[9]+".jpg"));
-                dice10.setIcon(diceImage);
+                dice[9].setIcon(diceImage);
 
+                //Once the user press the play button, it will be disabled
+                if(flagPlay==1)
+                {
+                    play.setEnabled(false);
+                }
+
+                //Dice case
+                if(e.getSource()==dice[0])
+                {
+                    if(faces[0]==1)
+                    {
+
+                    }
+                }
+
+                if(e.getSource()==dice[1])
+                {
+
+                }
+
+                if(e.getSource()==dice[2])
+                {
+
+                }
+
+                if(e.getSource()==dice[3])
+                {
+
+                }
+
+                if(e.getSource()==dice[4])
+                {
+
+                }
+
+                if(e.getSource()==dice[5])
+                {
+
+                }
+
+                if(e.getSource()==dice[6])
+                {
+
+                }
+
+                if(e.getSource()==dice[7])
+                {
+
+                }
+
+                if(e.getSource()==dice[8])
+                {
+
+                }
+
+                if(e.getSource()==dice[9])
+                {
+
+                }
             }
-            else
+
+            //Button to get information about the game
+            if(e.getSource()==help)
             {
-                if(e.getSource()==help)
-                {
-                    JOptionPane.showMessageDialog(null, BEGINNING_MESSAGE);
-                }
-                else
-                {
-                    System.exit(0);
-                }
+                JOptionPane.showMessageDialog(null, BEGINNING_MESSAGE);
+            }
+
+            //Button to exit the game
+            if(e.getSource()==exit)
+            {
+                System.exit(0);
             }
         }
     }

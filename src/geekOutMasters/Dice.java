@@ -11,7 +11,7 @@ import java.util.Random;
  */
 public class Dice
 {
-    private int  visibleFace, statePower;
+    public int  visibleFace, statePower;
     private String power;
 
     /**
@@ -30,9 +30,9 @@ public class Dice
         return visibleFace;
     }
 
-    public String getPower()
+    public String getPower(Dice aDice)
     {
-        if(getVisibleFace()==1)
+        if(aDice.getVisibleFace()==1)
         {
             power="42";
         }
@@ -56,6 +56,7 @@ public class Dice
         {
             power="ship";
         }
+
         return power;
     }
 }
