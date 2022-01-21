@@ -192,509 +192,66 @@ public class GeekOutMasters
     /**
      * Hero: Allows any unused dice (active dice section) to be flipped over and placed on its opposite side.
      */
-    public void heroAction(JPanel[] APanel, JButton[] ADice, ImageIcon AImageIcon, ActionEvent e, int[] AFaces)
+    public void heroAction(JPanel[] APanel, JButton[] ADice, ImageIcon AImageIcon, int[] AFaces)
     {
-        JOptionPane.showMessageDialog(null, "Choose the dice you would like to invert its face");
-        boolean state=false;
-        while(state==false)
+        JOptionPane.showMessageDialog(null,"A random dice will flip to its opposite face.");
+        for(int i=0; i < ADice.length; i++)
         {
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[0])
+            if(ADice[i].isEnabled())
             {
-                if (AFaces[0] == 1)
+                if (AFaces[i] == 1)
                 {
-                    AFaces[0] = 3;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
-                    ADice[0].updateUI();
+                    AFaces[i] = 3;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
                     APanel[2].updateUI();
                     break;
                 }
                 if (AFaces[0] == 2) {
-                    AFaces[0] = 4;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
+                    AFaces[i] = 4;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
+                    APanel[2].updateUI();
                     break;
                 }
                 if (AFaces[0] == 3) {
-                    AFaces[0] = 1;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
+                    AFaces[i] = 1;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
+                    APanel[2].updateUI();
                     break;
                 }
                 if (AFaces[0] == 4) {
-                    AFaces[0] = 2;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
+                    AFaces[i] = 2;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
+                    APanel[2].updateUI();
                     break;
                 }
                 if (AFaces[0] == 5) {
-                    AFaces[0] = 6;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
+                    AFaces[i] = 6;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
+                    APanel[2].updateUI();
                     break;
                 }
                 if (AFaces[0] == 6) {
-                    AFaces[0] = 5;
-                    ADice[0].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                    ADice[0].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[1]) {
-                if (AFaces[1] == 1) {
-                    AFaces[1] = 3;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[1] == 2) {
-                    AFaces[1] = 4;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[1] == 3) {
-                    AFaces[1] = 1;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[1] == 4) {
-                    AFaces[1] = 2;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[1] == 5) {
-                    AFaces[1] = 6;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[1] == 6) {
-                    AFaces[1] = 5;
-                    ADice[1].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                    ADice[1].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[2]) {
-                if (AFaces[2] == 1) {
-                    AFaces[2] = 3;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[2] == 2) {
-                    AFaces[2] = 4;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[2] == 3) {
-                    AFaces[2] = 1;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[2] == 4) {
-                    AFaces[2] = 2;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[2] == 5) {
-                    AFaces[2] = 6;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[2] == 6) {
-                    AFaces[2] = 5;
-                    ADice[2].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                    ADice[2].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[3]) {
-                if (AFaces[3] == 1) {
-                    AFaces[3] = 3;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[3] == 2) {
-                    AFaces[3] = 4;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[3] == 3) {
-                    AFaces[3] = 1;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[3] == 4) {
-                    AFaces[3] = 2;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[3] == 5) {
-                    AFaces[3] = 6;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[3] == 6) {
-                    AFaces[3] = 5;
-                    ADice[3].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                    ADice[3].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[4]) {
-                if (AFaces[4] == 1) {
-                    AFaces[4] = 3;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[4] == 2) {
-                    AFaces[4] = 4;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[4] == 3) {
-                    AFaces[4] = 1;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[4] == 4) {
-                    AFaces[4] = 2;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[4] == 5) {
-                    AFaces[4] = 6;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[4] == 6) {
-                    AFaces[4] = 5;
-                    ADice[4].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                    ADice[4].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[5]) {
-                if (AFaces[5] == 1) {
-                    AFaces[5] = 3;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[5] == 2) {
-                    AFaces[5] = 4;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[5] == 3) {
-                    AFaces[5] = 1;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                }
-                if (AFaces[5] == 4) {
-                    AFaces[5] = 2;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[5] == 5) {
-                    AFaces[5] = 6;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[5] == 6) {
-                    AFaces[5] = 5;
-                    ADice[5].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                    ADice[5].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[6]) {
-                if (AFaces[6] == 1) {
-                    AFaces[6] = 3;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[6] == 2) {
-                    AFaces[6] = 4;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[6] == 3) {
-                    AFaces[6] = 1;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[6] == 4) {
-                    AFaces[6] = 2;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[6] == 5) {
-                    AFaces[6] = 6;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[6] == 6) {
-                    AFaces[6] = 5;
-                    ADice[6].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                    ADice[6].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[7])
-            {
-                if (AFaces[7] == 1)
-                {
-                    AFaces[7] = 3;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[7] == 2)
-                {
-                    AFaces[7] = 4;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[7] == 3)
-                {
-                    AFaces[7] = 1;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[7] == 4) {
-                    AFaces[7] = 2;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[7] == 5) {
-                    AFaces[7] = 6;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[7] == 6) {
-                    AFaces[7] = 5;
-                    ADice[7].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                    ADice[7].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[8])
-            {
-                if (AFaces[8] == 1)
-                {
-                    AFaces[8] = 3;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[8] == 2)
-                {
-                    AFaces[8] = 4;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[8] == 3)
-                {
-                    AFaces[8] = 1;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[8] == 4)
-                {
-                    AFaces[8] = 2;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[8] == 5)
-                {
-                    AFaces[8] = 6;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[8] == 6)
-                {
-                    AFaces[8] = 5;
-                    ADice[8].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                    ADice[8].setIcon(AImageIcon);
-                    break;
-                }
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[9])
-            {
-                if (AFaces[9] == 1)
-                {
-                    AFaces[9] = 3;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[9] == 2)
-                {
-                    AFaces[9] = 4;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[9] == 3)
-                {
-                    AFaces[9] = 1;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[9] == 4)
-                {
-                    AFaces[9] = 2;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[9] == 5)
-                {
-                    AFaces[9] = 6;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
-                    break;
-                }
-                if (AFaces[9] == 6)
-                {
-                    AFaces[9] = 5;
-                    ADice[9].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                    ADice[9].setIcon(AImageIcon);
+                    AFaces[i] = 5;
+                    ADice[i].setIcon(null);
+                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
+                    ADice[i].setIcon(AImageIcon);
+                    ADice[i].updateUI();
+                    APanel[2].updateUI();
                     break;
                 }
             }
@@ -706,139 +263,10 @@ public class GeekOutMasters
      */
     public void meepleAction(JButton[] ADice, ImageIcon AImageIcon, ActionEvent e, int[] AFaces)
     {
-        JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
-        boolean state=false;
-        while (state==false)
+        JOptionPane.showMessageDialog(null, "A random dice will be re-rolled");
+        for(int i=0; i < ADice.length; i++)
         {
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[0])
-            {
-                Random randomNumber  = new Random();
-                AFaces[0]=randomNumber.nextInt(6)+1;
-                ADice[0].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[0] + ".jpg")));
-                ADice[0].setIcon(AImageIcon);
-                break;
-            }
 
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[1])
-            {
-                Random randomNumber  = new Random();
-                AFaces[1]=randomNumber.nextInt(6)+1;
-                ADice[1].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[1] + ".jpg")));
-                ADice[1].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[2])
-            {
-                Random randomNumber  = new Random();
-                AFaces[2]=randomNumber.nextInt(6)+1;
-                ADice[2].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[2] + ".jpg")));
-                ADice[2].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[3])
-            {
-                Random randomNumber  = new Random();
-                AFaces[3]=randomNumber.nextInt(6)+1;
-                ADice[3].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[3] + ".jpg")));
-                ADice[3].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[4])
-            {
-                Random randomNumber  = new Random();
-                AFaces[4]=randomNumber.nextInt(6)+1;
-                ADice[4].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[4] + ".jpg")));
-                ADice[4].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[5])
-            {
-                Random randomNumber  = new Random();
-                AFaces[5]=randomNumber.nextInt(6)+1;
-                ADice[5].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[5] + ".jpg")));
-                ADice[5].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[6])
-            {
-                Random randomNumber  = new Random();
-                AFaces[6]=randomNumber.nextInt(6)+1;
-                ADice[6].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[6] + ".jpg")));
-                ADice[6].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[7])
-            {
-                Random randomNumber  = new Random();
-                AFaces[7]=randomNumber.nextInt(6)+1;
-                ADice[7].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[7] + ".jpg")));
-                ADice[7].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[8])
-            {
-                Random randomNumber  = new Random();
-                AFaces[8]=randomNumber.nextInt(6)+1;
-                ADice[8].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[8] + ".jpg")));
-                ADice[8].setIcon(AImageIcon);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[9])
-            {
-                Random randomNumber  = new Random();
-                AFaces[9]=randomNumber.nextInt(6)+1;
-                ADice[9].setIcon(null);
-                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[9] + ".jpg")));
-                ADice[9].setIcon(AImageIcon);
-                break;
-            }
         }
     }
 

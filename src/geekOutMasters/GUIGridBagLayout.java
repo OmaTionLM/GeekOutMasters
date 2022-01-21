@@ -378,7 +378,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[0].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[0] == 5)//5: face of meeple
@@ -450,7 +450,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[1].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[1] == 5)//5: face of meeple
@@ -521,7 +521,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[2].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[2] == 5)//5: face of meeple
@@ -592,7 +592,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[3].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[3] == 5)//5: face of meeple
@@ -663,7 +663,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[4].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[4] == 5)//5: face of meeple
@@ -734,7 +734,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[5].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[5] == 5)//5: face of meeple
@@ -805,7 +805,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[6].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[6] == 5)//5: face of meeple
@@ -875,7 +875,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[7].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[7] == 5)//5: face of meeple
@@ -946,7 +946,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[8].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[8] == 5)//5: face of meeple
@@ -1017,7 +1017,7 @@ public class GUIGridBagLayout extends JFrame
                         dice[9].updateUI();
                         panelsToUse[2].updateUI();
                         panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, e, faces);
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
                         break;
                     }
                     if (faces[9] == 5)//5: face of meeple
