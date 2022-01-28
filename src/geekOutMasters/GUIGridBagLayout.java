@@ -37,16 +37,12 @@ public class GUIGridBagLayout extends JFrame
     private JButton play, help, exit;
     private ImageIcon diceImage;
     private GeekOutMasters geekOutMasters;
-    private int flagPlay=0, roundCount=0;
+    private int flagPlay=0, flagDice=0, power=0, flagAction=0, round=1, totalPoints=0;
     private int[] faces;
-
-    /**
-     * Public attributes
-     */
-    public Header headerProject;
-    public JPanel[] panelsToUse;
-    public Listener listener;
-    public JTextArea yourScoreMessage;
+    private Header headerProject;
+    private JPanel[] panelsToUse;
+    private Listener listener;
+    private JTextArea yourScoreMessage;
 
     /**
      * Constructor of GUI class
@@ -80,7 +76,7 @@ public class GUIGridBagLayout extends JFrame
         geekOutMasters=new GeekOutMasters();
 
         //Set up JComponents
-        /**
+        /*
          * Panel creation
          */
         panelsToUse=new JPanel[3];
@@ -89,17 +85,17 @@ public class GUIGridBagLayout extends JFrame
         panelsToUse[1]=new JPanel();//This is the dice used panel.
         panelsToUse[2]=new JPanel();//this is your dice panel.
 
-        /**
+        /*
          * Header of interface
          */
         headerProject = new Header("Geek Out Master Table", Color.BLACK);
         constraints.gridx=0;
         constraints.gridy=0;
-        constraints.gridwidth=2;
+        constraints.gridwidth=0;
         constraints.fill=GridBagConstraints.HORIZONTAL;
         this.add(headerProject, constraints);
 
-        /**
+        /*
          * Button help
          */
         help=new JButton("How to play?");
@@ -111,7 +107,7 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.LINE_START;
         this.add(help, constraints);
 
-        /**
+        /*
          * Exit Button
          */
         exit=new JButton("  Exit  ");
@@ -123,7 +119,7 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.LINE_END;
         this.add(exit, constraints);
 
-        /**
+        /*
          * Creation of the dice buttons and adding his action listener
          */
         dice=new JButton[10];
@@ -139,10 +135,10 @@ public class GUIGridBagLayout extends JFrame
         dice[8]=new JButton(); dice[8].addActionListener(listener);
         dice[9]=new JButton(); dice[9].addActionListener(listener);
 
-        /**
+        /*
          * Initial image of the dice
          */
-        diceImage=new ImageIcon(getClass().getResource("/resources/1.jpg"));
+        diceImage=new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/1.jpg")));
         dice[0].setIcon(diceImage);
         dice[1].setIcon(diceImage);
         dice[2].setIcon(diceImage);
@@ -156,7 +152,7 @@ public class GUIGridBagLayout extends JFrame
 
 
 
-        /**
+        /*
          * Inactive dice panel
          */
         panelsToUse[0]=new JPanel();//Inactive dice panel
@@ -169,7 +165,7 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.CENTER;
         add(panelsToUse[0], constraints);
 
-        /**
+        /*
          * Dice used panel
          */
         panelsToUse[1]=new JPanel();//Dice used panel
@@ -182,12 +178,12 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.CENTER;
         add(panelsToUse[1], constraints);
 
-        /**
+        /*
          * Your score panel
          */
         yourScoreMessage=new JTextArea();
         yourScoreMessage.setPreferredSize(new Dimension(600,400));
-        yourScoreMessage.setBorder(BorderFactory.createTitledBorder("Your Score."));
+        yourScoreMessage.setBorder(BorderFactory.createTitledBorder("Your Score And The Round You're In."));
         yourScoreMessage.setText("1 dice = 1 point."
                                 +"\n2 dice = 3 point."
                                 +"\n3 dice = 5 point."
@@ -198,7 +194,8 @@ public class GUIGridBagLayout extends JFrame
                                 +"\n8 dice = 36 point."
                                 +"\n9 dice = 45 point."
                                 +"\n10 dice = 55 point."
-                                +"\n \nTOTAL POINTS: "+geekOutMasters.getTotalPoints());
+                                +"\n \nROUND: "+round
+                                +"\n \nTOTAL POINTS: "+totalPoints);
         yourScoreMessage.setEditable(false);
         constraints.gridx=2;
         constraints.gridy=2;
@@ -207,7 +204,7 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.CENTER;
         add(yourScoreMessage, constraints);
 
-        /**
+        /*
          * Your dice panel
          */
         panelsToUse[2]=new JPanel();//Your dice panel
@@ -230,7 +227,7 @@ public class GUIGridBagLayout extends JFrame
         constraints.anchor=GridBagConstraints.CENTER;
         add(panelsToUse[2], constraints);
 
-        /**
+        /*
          * Play Button
          */
         play=new JButton("Play");
@@ -261,25 +258,50 @@ public class GUIGridBagLayout extends JFrame
      */
     private class Listener implements ActionListener
     {
+
         @Override
         public void actionPerformed(ActionEvent e)
         {
-            /**
+            /*
+             * Determine if the player reached the required points.
+             */
+            if(round==6 && totalPoints < 30)
+            {
+                geekOutMasters.youLose(play, dice, panelsToUse);
+                flagPlay=0;
+                flagDice=0;
+                round=1;
+            }
+
+            /*
+             * Determine if the player reached the required points.
+             */
+            if(round==6 && totalPoints >= 30)
+            {
+                geekOutMasters.youWin(play, dice, panelsToUse);
+                flagPlay=0;
+                flagDice=0;
+                round=1;
+            }
+
+            /*
              * Button to start the game
              */
             if(e.getSource()==play)
             {
-                /**
-                 *
+
+                /*
+                 * flag to determinate the action
+                 */
+                flagDice++;
+
+                /*
+                 * Get faces of the dice
                  */
                 geekOutMasters.determinateFace();
                 faces=geekOutMasters.getFaces();
 
-                /**
-                 * Round count
-                 */
-                roundCount++;
-                /**
+                /*
                  * Button activation
                  */
                 for(int i=0; i < dice.length; i++)
@@ -287,7 +309,7 @@ public class GUIGridBagLayout extends JFrame
                     dice[i].setEnabled(true);
                 }
 
-                /**
+                /*
                  * adding the dice in inactive dice panel
                  */
                 for(int i=0; i < dice.length; i++)
@@ -301,7 +323,7 @@ public class GUIGridBagLayout extends JFrame
                     }
                 }
 
-                /**
+                /*
                  * Add images at the panel
                  */
                 flagPlay++;
@@ -326,7 +348,7 @@ public class GUIGridBagLayout extends JFrame
                 diceImage=new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + faces[9] + ".jpg")));
                 dice[9].setIcon(diceImage);
 
-                /**
+                /*
                  * Once the user press the play button, it will be disabled
                  */
                 if(flagPlay==1)
@@ -335,717 +357,1627 @@ public class GUIGridBagLayout extends JFrame
                 }
             }
 
-            /**
-             * Dice 1 button
+            /*
+             * Determine the state of the game
              */
-            if(e.getSource()==dice[0])
+            if(panelsToUse[2].getComponentCount()==0)
             {
-                boolean state=false;
-                while(state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[0] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[0] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[0] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[0]);
-                            panelsToUse[1].add(dice[0]);
-                            dice[0].setEnabled(false);
-                            dice[0].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[0] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[0]);
-                        panelsToUse[1].add(dice[0]);
-                        dice[0].setEnabled(false);
-                        dice[0].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[0] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[0]);
-                        panelsToUse[1].add(dice[0]);
-                        dice[0].setEnabled(false);
-                        dice[0].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[0] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[0]);
-                        panelsToUse[1].add(dice[0]);
-                        dice[0].setEnabled(false);
-                        dice[0].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
+                geekOutMasters.youLose(play, dice, panelsToUse);
+                flagPlay=0;
+                flagDice=0;
+                round++;
             }
 
-            /**
-             * Dice 2 button
+            /*
+             * Get action
              */
-            if(e.getSource()==dice[1])
+            if(flagDice==1)
             {
-                boolean state=false;
-                while(state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     * */
-                    if (faces[1] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
 
-                    if (faces[1] == 2)//2: face of dragon
+                /*
+                 * Dice 1 button
+                 */
+                if (e.getSource() == dice[0])
+                {
+                    boolean state = false;
+                    while (state == false)
                     {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[1] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[1]);
-                            panelsToUse[1].add(dice[1]);
-                            dice[1].setEnabled(false);
-                            dice[1].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                        /*
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[0] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
                             break;
                         }
+                        if (faces[0] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[0] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                dice[0].setEnabled(false);
+                                panelsToUse[2].remove(dice[0]);
+                                panelsToUse[1].add(dice[0]);
+                                dice[0].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[0] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[0]);
+                                panelsToUse[1].add(dice[0]);
+                                dice[0].setEnabled(false);
+                                dice[0].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[0] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[0]);
+                                panelsToUse[1].add(dice[0]);
+                                dice[0].setEnabled(false);
+                                dice[0].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[0] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[0]);
+                                panelsToUse[1].add(dice[0]);
+                                dice[0].setEnabled(false);
+                                dice[0].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
                     }
-                    if (faces[1] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[1]);
-                        panelsToUse[1].add(dice[1]);
-                        dice[1].setEnabled(false);
-                        dice[1].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
+                }
+
+                /*
+                 * Dice 2 button
+                 */
+                if (e.getSource() == dice[1]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         * */
+                        if (faces[1] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+
+                        if (faces[1] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[1] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                dice[1].setEnabled(false);
+                                panelsToUse[2].remove(dice[1]);
+                                panelsToUse[1].add(dice[1]);
+                                dice[1].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[1] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[1]);
+                                panelsToUse[1].add(dice[1]);
+                                dice[1].setEnabled(false);
+                                dice[1].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[1] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[1]);
+                                panelsToUse[1].add(dice[1]);
+                                dice[1].setEnabled(false);
+                                dice[1].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[1] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount()==1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[1]);
+                                panelsToUse[1].add(dice[1]);
+                                dice[1].setEnabled(false);
+                                dice[1].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
                     }
-                    if (faces[1] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[1]);
-                        panelsToUse[1].add(dice[1]);
-                        dice[1].setEnabled(false);
-                        dice[1].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
+                }
+
+                /*
+                 * Dice 3 button
+                 */
+                if (e.getSource() == dice[2]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[2] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[2] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[2] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[2]);
+                                panelsToUse[1].add(dice[2]);
+                                dice[2].setEnabled(false);
+                                dice[2].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[2] == 4)//4: face of hero
+                        {
+                            if (panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[2]);
+                                panelsToUse[1].add(dice[2]);
+                                dice[2].setEnabled(false);
+                                dice[2].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[2] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[2]);
+                                panelsToUse[1].add(dice[2]);
+                                dice[2].setEnabled(false);
+                                dice[2].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[2] == 6)//6: face of ship
+                        {
+                            if (panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[2]);
+                                panelsToUse[1].add(dice[2]);
+                                dice[2].setEnabled(false);
+                                dice[2].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
                     }
-                    if (faces[1] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[1]);
-                        panelsToUse[1].add(dice[1]);
-                        dice[1].setEnabled(false);
-                        dice[1].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
+                }
+
+                /*
+                 * Dice 4 button
+                 */
+                if (e.getSource() == dice[3]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[3] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[3] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[3] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[3]);
+                                panelsToUse[1].add(dice[3]);
+                                dice[3].setEnabled(false);
+                                dice[3].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[3] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[3]);
+                                panelsToUse[1].add(dice[3]);
+                                dice[3].setEnabled(false);
+                                dice[3].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[3] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[3]);
+                                panelsToUse[1].add(dice[3]);
+                                dice[3].setEnabled(false);
+                                dice[3].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[3] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[3]);
+                                panelsToUse[1].add(dice[3]);
+                                dice[3].setEnabled(false);
+                                dice[3].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 5 button
+                 */
+                if (e.getSource() == dice[4]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[4] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[4] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[4] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[4]);
+                                panelsToUse[1].add(dice[4]);
+                                dice[4].setEnabled(false);
+                                dice[4].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[4] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[4]);
+                                panelsToUse[1].add(dice[4]);
+                                dice[4].setEnabled(false);
+                                dice[4].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                            }
+                            break;
+                        }
+                        if (faces[4] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[4]);
+                                panelsToUse[1].add(dice[4]);
+                                dice[4].setEnabled(false);
+                                dice[4].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[4] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[4]);
+                                panelsToUse[1].add(dice[4]);
+                                dice[4].setEnabled(false);
+                                dice[4].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 6 button
+                 */
+                if (e.getSource() == dice[5]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[5] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[5] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[5] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[5]);
+                                panelsToUse[1].add(dice[5]);
+                                dice[5].setEnabled(false);
+                                dice[5].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[5] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[5]);
+                                panelsToUse[1].add(dice[5]);
+                                dice[5].setEnabled(false);
+                                dice[5].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[5] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[5]);
+                                panelsToUse[1].add(dice[5]);
+                                dice[5].setEnabled(false);
+                                dice[5].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[5] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[5]);
+                                panelsToUse[1].add(dice[5]);
+                                dice[5].setEnabled(false);
+                                dice[5].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 7 button
+                 */
+                if (e.getSource() == dice[6]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[6] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[6] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[6] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[6]);
+                                panelsToUse[1].add(dice[6]);
+                                dice[6].setEnabled(false);
+                                dice[6].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[6] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[6]);
+                                panelsToUse[1].add(dice[6]);
+                                dice[6].setEnabled(false);
+                                dice[6].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[6] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[6]);
+                                panelsToUse[1].add(dice[6]);
+                                dice[6].setEnabled(false);
+                                dice[6].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[6] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[6]);
+                                panelsToUse[1].add(dice[6]);
+                                dice[6].setEnabled(false);
+                                dice[6].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 8 button
+                 */
+                if (e.getSource() == dice[7]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[7] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[7] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[7] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "Choose the die you want to flip its face on.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[7]);
+                                panelsToUse[1].add(dice[7]);
+                                dice[7].setEnabled(false);
+                                dice[7].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[7] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[7]);
+                                panelsToUse[1].add(dice[7]);
+                                dice[7].setEnabled(false);
+                                dice[7].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[7] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[7]);
+                                panelsToUse[1].add(dice[7]);
+                                dice[7].setEnabled(false);
+                                dice[7].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[7] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[7]);
+                                panelsToUse[1].add(dice[7]);
+                                dice[7].setEnabled(false);
+                                dice[7].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 9 button
+                 */
+                if (e.getSource() == dice[8]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /**
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[8] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[8] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[8] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[8]);
+                                panelsToUse[1].add(dice[8]);
+                                dice[8].setEnabled(false);
+                                dice[8].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[8] == 4)//4: face of hero
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[8]);
+                                panelsToUse[1].add(dice[8]);
+                                dice[8].setEnabled(false);
+                                dice[8].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[8] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[8]);
+                                panelsToUse[1].add(dice[8]);
+                                dice[8].setEnabled(false);
+                                dice[8].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+
+                        }
+                        if (faces[8] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[8]);
+                                panelsToUse[1].add(dice[8]);
+                                dice[8].setEnabled(false);
+                                dice[8].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                /*
+                 * Dice 10 button
+                 */
+                if (e.getSource() == dice[9]) {
+                    boolean state = false;
+                    while (state == false) {
+                        /*
+                         * Conditionals of the faces of the dice
+                         */
+                        if (faces[9] == 1)//1: face of 42
+                        {
+                            geekOutMasters.action42();
+                            break;
+                        }
+                        if (faces[9] == 2)//2: face of dragon
+                        {
+                            if(panelsToUse[2].getComponentCount()==1)
+                            {
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                geekOutMasters.dragonAction();
+                                break;
+                            }
+                        }
+                        if (faces[9] == 3)//3: face of heart
+                        {
+                            if (panelsToUse[0].getComponentCount() == 0) {
+                                JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
+                                break;
+                            } else {
+                                panelsToUse[2].remove(dice[9]);
+                                panelsToUse[1].add(dice[9]);
+                                dice[9].setEnabled(false);
+                                dice[9].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
+                                break;
+                            }
+                        }
+                        if (faces[9] == 4)//4: face of hero
+                        {
+                            if (panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[9]);
+                                panelsToUse[1].add(dice[9]);
+                                dice[9].setEnabled(false);
+                                dice[9].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to flip its face on.");
+                                flagAction=1;
+                                power=4;
+                                flagDice=2;
+                                break;
+                            }
+                        }
+                        if (faces[9] == 5)//5: face of meeple
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[9]);
+                                panelsToUse[1].add(dice[9]);
+                                dice[9].setEnabled(false);
+                                dice[9].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to re-roll.");
+                                flagAction=1;
+                                power=5;
+                                flagDice=2;
+                                break;
+                            }
+
+                        }
+                        if (faces[9] == 6)//6: face of ship
+                        {
+                            if(panelsToUse[2].getComponentCount() == 1 || panelsToUse[2].getComponentCount() == 0)
+                            {
+                                JOptionPane.showMessageDialog(null, "There are no dice in your dice section.");
+                                geekOutMasters.youLose(play, dice, panelsToUse);
+                                flagPlay=0;
+                                flagDice=0;
+                                round++;
+                                yourScoreMessage.updateUI();
+                                break;
+                            }
+                            else
+                            {
+                                panelsToUse[2].remove(dice[9]);
+                                panelsToUse[1].add(dice[9]);
+                                dice[9].setEnabled(false);
+                                dice[9].updateUI();
+                                panelsToUse[2].updateUI();
+                                panelsToUse[1].updateUI();
+                                JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
+                                flagAction=1;
+                                power=6;
+                                flagDice=2;
+                                break;
+                            }
+                        }
                     }
                 }
             }
 
-            /**
-             * Dice 3 button
+            /*
+             * Do action
              */
-            if(e.getSource()==dice[2])
+            if(flagDice==2)
             {
-                boolean state=false;
-                while(state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
+                /*
+                * Hero power
+                 */
+                if (power == 4)
+                {
+                    /*
+                     * Dice 1
                      */
-                    if (faces[2] == 1)//1: face of 42
+                    if (e.getSource() == dice[0] && flagAction == 0)
                     {
-                        geekOutMasters.action42();
-                        break;
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice,0);
+                        power = 0;
+                        flagDice = 1;
                     }
-                    if (faces[2] == 2)//2: face of dragon
+                    /*
+                     * Dice 2
+                     */
+                    if (e.getSource() == dice[1] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 1);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    /*
+                     * Dice 3
+                     */
+                    if (e.getSource() == dice[2] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 2);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    /*
+                     * Dice 4
+                     */
+                    if (e.getSource() == dice[3] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 3);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 5
+                     */
+                    if (e.getSource() == dice[4] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 4);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 6
+                     */
+                    if (e.getSource() == dice[5] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 5);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 7
+                     */
+                    if (e.getSource() == dice[6] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 6);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 8
+                     */
+                    if (e.getSource() == dice[7] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 7);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 9
+                     */
+                    if (e.getSource() == dice[8] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 8);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 10
+                     */
+                    if (e.getSource() == dice[9] && flagAction == 0) {
+                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces, flagDice, 9);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    flagAction=0;
+                }
+
+                /*
+                * Meeple power
+                 */
+                if (power == 5)
+                {
+                    /*
+                     * Dice 1
+                     */
+                    if (e.getSource() == dice[0] && flagAction == 0)
                     {
-                        geekOutMasters.dragonAction();
-                        break;
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 0);
+                        power = 0;
+                        flagDice = 1;
                     }
-                    if (faces[2] == 3)//3: face of heart
+                    /*
+                     * Dice 2
+                     */
+                    if (e.getSource() == dice[1] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 1);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    /*
+                     * Dice 3
+                     */
+                    if (e.getSource() == dice[2] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 2);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    /*
+                     * Dice 4
+                     */
+                    if (e.getSource() == dice[3] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 3);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 5
+                     */
+                    if (e.getSource() == dice[4] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 4);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 6
+                     */
+                    if (e.getSource() == dice[5] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 5);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 7
+                     */
+                    if (e.getSource() == dice[6] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 6);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 8
+                     */
+                    if (e.getSource() == dice[7] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 7);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 9
+                     */
+                    if (e.getSource() == dice[8] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 8);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 10
+                     */
+                    if (e.getSource() == dice[9] && flagAction == 0) {
+                        geekOutMasters.meepleAction(panelsToUse, dice, diceImage, faces, 9);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    flagAction=0;
+                }
+
+                if(power==6)
+                {
+                    /*
+                     * Dice 1
+                     */
+                    if (e.getSource() == dice[0] && flagAction == 0)
                     {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[2]);
-                            panelsToUse[1].add(dice[2]);
-                            dice[2].setEnabled(false);
-                            dice[2].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
+                        geekOutMasters.shipAction(panelsToUse, dice, 0);
+                        power = 0;
+                        flagDice = 1;
                     }
-                    if (faces[2] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[2]);
-                        panelsToUse[1].add(dice[2]);
-                        dice[2].setEnabled(false);
-                        dice[2].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
+                    /*
+                     * Dice 2
+                     */
+                    if (e.getSource() == dice[1] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 1);
+                        power = 0;
+                        flagDice = 1;
                     }
-                    if (faces[2] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[2]);
-                        panelsToUse[1].add(dice[2]);
-                        dice[2].setEnabled(false);
-                        dice[2].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
+                    /*
+                     * Dice 3
+                     */
+                    if (e.getSource() == dice[2] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 2);
+                        power = 0;
+                        flagDice = 1;
                     }
-                    if (faces[2] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[2]);
-                        panelsToUse[1].add(dice[2]);
-                        dice[2].setEnabled(false);
-                        dice[2].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
+                    /*
+                     * Dice 4
+                     */
+                    if (e.getSource() == dice[3] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 3);
+                        power = 0;
+                        flagDice = 1;
                     }
+
+                    /*
+                     * Dice 5
+                     */
+                    if (e.getSource() == dice[4] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 4);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 6
+                     */
+                    if (e.getSource() == dice[5] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 5);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 7
+                     */
+                    if (e.getSource() == dice[6] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 6);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 8
+                     */
+                    if (e.getSource() == dice[7] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 7);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 9
+                     */
+                    if (e.getSource() == dice[8] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 8);
+                        power = 0;
+                        flagDice = 1;
+                    }
+
+                    /*
+                     * Dice 10
+                     */
+                    if (e.getSource() == dice[9] && flagAction == 0) {
+                        geekOutMasters.shipAction(panelsToUse, dice, 9);
+                        power = 0;
+                        flagDice = 1;
+                    }
+                    flagAction=0;
                 }
             }
 
-            /**
-             * Dice 4 button
-             */
-            if(e.getSource()==dice[3])
-            {
-                boolean state=false;
-                while (state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[3] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[3] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[3] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[3]);
-                            panelsToUse[1].add(dice[3]);
-                            dice[3].setEnabled(false);
-                            dice[3].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[3] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[3]);
-                        panelsToUse[1].add(dice[3]);
-                        dice[3].setEnabled(false);
-                        dice[3].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[3] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[3]);
-                        panelsToUse[1].add(dice[3]);
-                        dice[3].setEnabled(false);
-                        dice[3].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[3] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[3]);
-                        panelsToUse[1].add(dice[3]);
-                        dice[3].setEnabled(false);
-                        dice[3].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 5 button
-             */
-            if(e.getSource()==dice[4])
-            {
-                boolean state=false;
-                while (state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[4] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[4] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[4] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[4]);
-                            panelsToUse[1].add(dice[4]);
-                            dice[4].setEnabled(false);
-                            dice[4].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[4] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[4]);
-                        panelsToUse[1].add(dice[4]);
-                        dice[4].setEnabled(false);
-                        dice[4].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[4] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[4]);
-                        panelsToUse[1].add(dice[4]);
-                        dice[4].setEnabled(false);
-                        dice[4].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[4] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[4]);
-                        panelsToUse[1].add(dice[4]);
-                        dice[4].setEnabled(false);
-                        dice[4].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 6 button
-             */
-            if(e.getSource()==dice[5])
-            {
-                boolean state=false;
-                while (state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[5] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[5] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[5] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[5]);
-                            panelsToUse[1].add(dice[5]);
-                            dice[5].setEnabled(false);
-                            dice[5].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[5] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[5]);
-                        panelsToUse[1].add(dice[5]);
-                        dice[5].setEnabled(false);
-                        dice[5].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[5] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[5]);
-                        panelsToUse[1].add(dice[5]);
-                        dice[5].setEnabled(false);
-                        dice[5].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[5] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[5]);
-                        panelsToUse[1].add(dice[5]);
-                        dice[5].setEnabled(false);
-                        dice[5].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 7 button
-             */
-            if(e.getSource()==dice[6])
-            {
-                boolean state=false;
-                while (state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[6] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[6] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[6] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[6]);
-                            panelsToUse[1].add(dice[6]);
-                            dice[6].setEnabled(false);
-                            dice[6].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[6] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[6]);
-                        panelsToUse[1].add(dice[6]);
-                        dice[6].setEnabled(false);
-                        dice[6].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[6] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[6]);
-                        panelsToUse[1].add(dice[6]);
-                        dice[6].setEnabled(false);
-                        dice[6].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[6] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[6]);
-                        panelsToUse[1].add(dice[6]);
-                        dice[6].setEnabled(false);
-                        dice[6].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 8 button
-             */
-            if(e.getSource()==dice[7]) {
-                boolean state = false;
-                while (state == false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[7] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[7] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[7] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[7]);
-                            panelsToUse[1].add(dice[7]);
-                            dice[7].setEnabled(false);
-                            dice[7].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[7] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[7]);
-                        panelsToUse[1].add(dice[7]);
-                        dice[7].setEnabled(false);
-                        dice[7].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[7] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[7]);
-                        panelsToUse[1].add(dice[7]);
-                        dice[7].setEnabled(false);
-                        dice[7].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[7] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[7]);
-                        panelsToUse[1].add(dice[7]);
-                        dice[7].setEnabled(false);
-                        dice[7].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 9 button
-             */
-            if(e.getSource()==dice[8])
-            {
-                boolean state=false;
-                while (state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[8] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[8] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[8] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[8]);
-                            panelsToUse[1].add(dice[8]);
-                            dice[8].setEnabled(false);
-                            dice[8].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[8] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[8]);
-                        panelsToUse[1].add(dice[8]);
-                        dice[8].setEnabled(false);
-                        dice[8].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[8] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[8]);
-                        panelsToUse[1].add(dice[8]);
-                        dice[8].setEnabled(false);
-                        dice[8].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[8] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[8]);
-                        panelsToUse[1].add(dice[8]);
-                        dice[8].setEnabled(false);
-                        dice[8].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
-             * Dice 10 button
-             */
-            if(e.getSource()==dice[9])
-            {
-                boolean state=false;
-                while(state==false) {
-                    /**
-                     * Conditionals of the faces of the dice
-                     */
-                    if (faces[9] == 1)//1: face of 42
-                    {
-                        geekOutMasters.action42();
-                        break;
-                    }
-                    if (faces[9] == 2)//2: face of dragon
-                    {
-                        geekOutMasters.dragonAction();
-                        break;
-                    }
-                    if (faces[9] == 3)//3: face of heart
-                    {
-                        if (panelsToUse[0].getComponentCount() == 0) {
-                            JOptionPane.showMessageDialog(null, "There are no dice in the inactive dice section.");
-                        } else {
-                            panelsToUse[2].remove(dice[9]);
-                            panelsToUse[1].add(dice[9]);
-                            dice[9].setEnabled(false);
-                            dice[9].updateUI();
-                            panelsToUse[2].updateUI();
-                            panelsToUse[1].updateUI();
-                            geekOutMasters.heartAction(panelsToUse, dice, diceImage, faces);
-                            break;
-                        }
-                    }
-                    if (faces[9] == 4)//4: face of hero
-                    {
-                        panelsToUse[2].remove(dice[9]);
-                        panelsToUse[1].add(dice[9]);
-                        dice[9].setEnabled(false);
-                        dice[9].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.heroAction(panelsToUse, dice, diceImage, faces);
-                        break;
-                    }
-                    if (faces[9] == 5)//5: face of meeple
-                    {
-                        panelsToUse[2].remove(dice[9]);
-                        panelsToUse[1].add(dice[9]);
-                        dice[9].setEnabled(false);
-                        dice[9].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.meepleAction(dice, diceImage, e, faces);
-                        break;
-                    }
-                    if (faces[9] == 6)//6: face of ship
-                    {
-                        panelsToUse[2].remove(dice[9]);
-                        panelsToUse[1].add(dice[9]);
-                        dice[9].setEnabled(false);
-                        dice[9].updateUI();
-                        panelsToUse[2].updateUI();
-                        panelsToUse[1].updateUI();
-                        geekOutMasters.shipAction(panelsToUse, dice, e);
-                        break;
-                    }
-                }
-            }
-
-            /**
+            /*
              * Help button
              */
             if(e.getSource()==help)
@@ -1053,7 +1985,7 @@ public class GUIGridBagLayout extends JFrame
                 JOptionPane.showMessageDialog(null, BEGINNING_MESSAGE);
             }
 
-            /**
+            /*
              * Button to exit the game
              */
             if(e.getSource()==exit)

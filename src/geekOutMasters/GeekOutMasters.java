@@ -3,6 +3,8 @@ package geekOutMasters;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.AffineTransformOp;
+import java.lang.reflect.AccessibleObject;
 import java.net.http.WebSocket;
 import java.util.Objects;
 import java.util.Random;
@@ -12,13 +14,12 @@ public class GeekOutMasters
     /**
      * Attributes
      */
-    //public Dice dice1, dice2, dice3, dice4, dice5, dice6, dice7,dice8 ,dice9,dice10;
-    public Dice[] dice;
-    public int roundCount, totalPoints;
-    public int[] faces, roundPoints;
-    public int accountant;
+    private Dice[] dice;
+    private int[] faces;
 
-    //Constructor
+    /*
+    * Constructor
+    */
     public GeekOutMasters()
     {
         dice=new Dice[10];
@@ -35,21 +36,11 @@ public class GeekOutMasters
         dice[9]=new Dice();
 
         faces=new int[10];
-        roundPoints=new int[5];
-
-        accountant=0;
-
-        roundPoints[0]=0;
-        roundPoints[1]=0;
-        roundPoints[2]=0;
-        roundPoints[3]=0;
-        roundPoints[4]=0;
-
-        roundCount=1;
-        totalPoints=0;
     }
 
-    //Method to assign his visible face
+    /*
+    * Method to assign his visible face
+    */
     public void determinateFace()
     {
         faces[0]=dice[0].getVisibleFace();
@@ -64,30 +55,6 @@ public class GeekOutMasters
         faces[9]=dice[9].getVisibleFace();
     }
 
-    public int countingFaces(JButton[] ADice)
-    {
-        for(int i=0; i < faces.length; i++)
-        {
-            for(int i2=0; i2 < ADice.length; i2++)
-            {
-                if(ADice[i2].isEnabled() && faces[i]==1)
-                {
-                    accountant++;
-                }
-            }
-        }
-        return accountant;
-    }
-
-    public void images(JButton ADice, ImageIcon AImageIcon, int AFaces)
-    {
-        ADice.setIcon(null);
-        Random randomNumber = new Random();
-        AFaces = randomNumber.nextInt(6) + 1;
-        AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces + ".jpg")));
-        ADice.setIcon(AImageIcon);
-    }
-
     /**
      * 1 dice= 1 point
      * 2 dice= 3 points
@@ -100,51 +67,117 @@ public class GeekOutMasters
      * 9 dice= 45 points
      * 10 dice= 55 points
      */
-    public void determinatePoints(JButton[] ADice)
+    public int determinatePoints(int[] AFaces, JPanel[] APanel, int points)
     {
-        /**
-         * Points
+        /*
+        * Getting the numbers of 42 and Dragon
          */
-        if(countingFaces(ADice)==1)
+        int numberOfTheDragons=0, numberOfThe42=0, otherNumbers=0;
+        for(int i=0; i < AFaces.length; i++)
         {
-            totalPoints=1;
+            if(AFaces[i]==1)
+            {
+                numberOfThe42++;
+            }
+            if(AFaces[i]==2)
+            {
+                numberOfTheDragons++;
+            }
+            if((AFaces[i]==3) || (AFaces[i]==4) || (AFaces[i]==5) || (AFaces[i]==6) )
+            {
+                otherNumbers++;
+            }
         }
-        if(countingFaces(ADice)==2)
+
+        /*
+        * Assign points
+         */
+        if(numberOfThe42 > 0 && numberOfTheDragons==0 && otherNumbers==0)
         {
-            totalPoints=3;
+            if(numberOfThe42==1)
+            {
+                points=1;
+            }
+            if(numberOfThe42==2)
+            {
+                points=3;
+            }
+            if(numberOfThe42==3)
+            {
+                points=6;
+            }
+            if(numberOfThe42==4)
+            {
+                points=10;
+            }
+            if(numberOfThe42==5)
+            {
+                points=15;
+            }
+            if(numberOfThe42==6)
+            {
+                points=21;
+            }
+            if(numberOfThe42==7)
+            {
+                points=28;
+            }
+            if(numberOfThe42==8)
+            {
+                points=36;
+            }
+            if(numberOfThe42==9)
+            {
+                points=45;
+            }
+            if(numberOfThe42==10)
+            {
+                points=55;
+            }
+
+            JOptionPane.showMessageDialog(null, "Congratulations for your points obtained in this round. Press the Play button to start the next round.");
         }
-        if(countingFaces(ADice)==3)
+        return points;
+    }
+
+    /*
+    * "You Lose" is a method
+     */
+    public void youLose(JButton playButton, JButton[] ADice, JPanel[] APanels)
+    {
+        JOptionPane.showMessageDialog(null, "You got no points in this round, good luck in the next round.");
+        for(int i=0; i < ADice.length; i++)
         {
-            totalPoints=6;
+            APanels[0].removeAll();
+            APanels[1].removeAll();
+            APanels[2].add(ADice[i]);
+            ADice[i].setEnabled(false);
+            APanels[0].updateUI();
+            APanels[1].updateUI();
+            APanels[2].updateUI();
+            ADice[i].updateUI();
         }
-        if(countingFaces(ADice)==4)
+        playButton.setEnabled(true);
+    }
+
+    /*
+    * "You Win" is a method
+     */
+    public void youWin(JButton playButton, JButton[] ADice, JPanel[] APanels)
+    {
+        JOptionPane.showMessageDialog(null, "You win, congratulations!!! \n \n Press the play button to start five new rounds.");
+        for(int i=0; i < ADice.length; i++)
         {
-            totalPoints=10;
+            APanels[0].removeAll();
+            APanels[1].removeAll();
+            APanels[2].add(ADice[i]);
+            ADice[i].setEnabled(false);
+            APanels[0].updateUI();
+            APanels[1].updateUI();
+            APanels[2].updateUI();
+            ADice[i].updateUI();
         }
-        if(countingFaces(ADice)==5)
-        {
-            totalPoints=15;
-        }
-        if(countingFaces(ADice)==6)
-        {
-            totalPoints=21;
-        }
-        if(countingFaces(ADice)==7)
-        {
-            totalPoints=28;
-        }
-        if(countingFaces(ADice)==8)
-        {
-            totalPoints=36;
-        }
-        if(countingFaces(ADice)==9)
-        {
-            totalPoints=45;
-        }
-        if(countingFaces(ADice)==10)
-        {
-            totalPoints=55;
-        }
+        playButton.setEnabled(true);
     }
 
     /**
@@ -183,6 +216,7 @@ public class GeekOutMasters
                 ADice[i].setEnabled(true);
                 ADice[i].updateUI();
                 APanel[0].updateUI();
+                APanel[1].updateUI();
                 APanel[2].updateUI();
                 break;
             }
@@ -192,68 +226,63 @@ public class GeekOutMasters
     /**
      * Hero: Allows any unused dice (active dice section) to be flipped over and placed on its opposite side.
      */
-    public void heroAction(JPanel[] APanel, JButton[] ADice, ImageIcon AImageIcon, int[] AFaces)
+    public void heroAction(JPanel[] APanel, JButton[] ADice, ImageIcon AImageIcon, int[] AFaces, int flag, int numberDice)
     {
-        JOptionPane.showMessageDialog(null,"A random dice will flip to its opposite face.");
-        for(int i=0; i < ADice.length; i++)
-        {
-            if(ADice[i].isEnabled())
-            {
-                if (AFaces[i] == 1)
-                {
-                    AFaces[i] = 3;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
-                if (AFaces[0] == 2) {
-                    AFaces[i] = 4;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
-                if (AFaces[0] == 3) {
-                    AFaces[i] = 1;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
-                if (AFaces[0] == 4) {
-                    AFaces[i] = 2;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
-                if (AFaces[0] == 5) {
-                    AFaces[i] = 6;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
-                if (AFaces[0] == 6) {
-                    AFaces[i] = 5;
-                    ADice[i].setIcon(null);
-                    AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[i] + ".jpg")));
-                    ADice[i].setIcon(AImageIcon);
-                    ADice[i].updateUI();
-                    APanel[2].updateUI();
-                    break;
-                }
+        boolean state=false;
+        while (state==false){
+            if (AFaces[numberDice] == 1) {
+                AFaces[numberDice] = 3;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
+            }
+            if (AFaces[numberDice] == 2) {
+                AFaces[numberDice] = 4;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
+            }
+            if (AFaces[numberDice] == 3) {
+                AFaces[numberDice] = 1;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
+            }
+            if (AFaces[numberDice] == 4) {
+                AFaces[numberDice] = 2;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
+            }
+            if (AFaces[numberDice] == 5) {
+                AFaces[numberDice] = 6;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
+            }
+            if (AFaces[numberDice] == 6) {
+                AFaces[numberDice] = 5;
+                ADice[numberDice].setIcon(null);
+                AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+                ADice[numberDice].setIcon(AImageIcon);
+                ADice[numberDice].updateUI();
+                APanel[2].updateUI();
+                break;
             }
         }
     }
@@ -261,156 +290,28 @@ public class GeekOutMasters
     /**
      * Meeple: Allow you to re-roll another dice in play, that is, from the active dice section.
      */
-    public void meepleAction(JButton[] ADice, ImageIcon AImageIcon, ActionEvent e, int[] AFaces)
+    public void meepleAction(JPanel[] APanel,JButton[] ADice, ImageIcon AImageIcon, int[] AFaces, int numberDice)
     {
-        JOptionPane.showMessageDialog(null, "A random dice will be re-rolled");
-        for(int i=0; i < ADice.length; i++)
-        {
-
-        }
+        Random randomNumber=new Random();
+        AFaces[numberDice]= randomNumber.nextInt(6)+1;
+        ADice[numberDice].setIcon(null);
+        AImageIcon = new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/" + AFaces[numberDice] + ".jpg")));
+        ADice[numberDice].setIcon(AImageIcon);
+        ADice[numberDice].updateUI();
+        APanel[2].updateUI();
     }
 
     /**
      * Ship: This dice sends an unused dice (from the active dice section) to inactive dice section.
      */
-    public void shipAction(JPanel[] APanel, JButton[] ADice, ActionEvent e)
+    public void shipAction(JPanel[] APanel, JButton[] ADice, int numberDice)
     {
-        JOptionPane.showMessageDialog(null, "Choose the dice you want to send to the inactive dice section.");
-        boolean state=false;
-        while(state==false)
-        {
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[0])
-            {
-                APanel[2].remove(ADice[0]);
-                APanel[0].add(ADice[0]);
-                ADice[0].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[1])
-            {
-                APanel[2].remove(ADice[1]);
-                APanel[0].add(ADice[1]);
-                ADice[1].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[2])
-            {
-                APanel[2].remove(ADice[2]);
-                APanel[0].add(ADice[2]);
-                ADice[2].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[3])
-            {
-                APanel[2].remove(ADice[3]);
-                APanel[0].add(ADice[3]);
-                ADice[3].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[4])
-            {
-                APanel[2].remove(ADice[4]);
-                APanel[0].add(ADice[4]);
-                ADice[4].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[5])
-            {
-                APanel[2].remove(ADice[5]);
-                APanel[0].add(ADice[5]);
-                ADice[5].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[6])
-            {
-                APanel[2].remove(ADice[6]);
-                APanel[0].add(ADice[6]);
-                ADice[6].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[7])
-            {
-                APanel[2].remove(ADice[7]);
-                APanel[0].add(ADice[7]);
-                ADice[7].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[8])
-            {
-                APanel[2].remove(ADice[8]);
-                APanel[0].add(ADice[8]);
-                ADice[8].setEnabled(false);
-                break;
-            }
-
-            /**
-             * Dice
-             */
-            if (e.getSource() == ADice[9])
-            {
-                APanel[2].remove(ADice[9]);
-                APanel[0].add(ADice[9]);
-                ADice[9].setEnabled(false);
-                break;
-            }
-        }
-    }
-
-    public int goRound()
-    {
-        roundCount++;
-        return roundCount;
-    }
-
-    /**
-     * @return totalPoints value.
-     */
-    public int getTotalPoints()
-    {
-        return totalPoints;
-    }
-
-    /**
-     * @return roundCount value.
-     */
-    public int getRoundCount()
-    {
-        return roundCount;
+        APanel[2].remove(ADice[numberDice]);
+        APanel[0].add(ADice[numberDice]);
+        ADice[numberDice].setEnabled(false);
+        APanel[2].updateUI();
+        APanel[0].updateUI();
+        ADice[numberDice].updateUI();
     }
 
     /**
@@ -419,41 +320,6 @@ public class GeekOutMasters
     public int[] getFaces()
     {
         return faces;
-    }
-
-    /**
-     * @return faces value.
-     */
-    public int[] getRoundPoints()
-    {
-        for (int i=0; i < roundCount; i++)
-        {
-            if(roundCount==1)
-            {
-                roundPoints[0]=0;
-            }
-
-            if(roundCount==2)
-            {
-                roundPoints[1]=0;
-            }
-
-            if(roundCount==3)
-            {
-                roundPoints[2]=0;
-            }
-
-            if(roundCount==4)
-            {
-                roundPoints[3]=0;
-            }
-
-            if(roundCount==5)
-            {
-                roundPoints[4]=0;
-            }
-        }
-        return roundPoints;
     }
 }
 
