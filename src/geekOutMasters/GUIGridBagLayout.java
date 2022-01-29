@@ -31,18 +31,19 @@ public class GUIGridBagLayout extends JFrame
             +"\nWatch out for the dragon!";
 
     /**
-     * Private attributes
+     * Attributes
      */
     private JButton[] dice;
     private JButton play, help, exit;
     private ImageIcon diceImage;
     private GeekOutMasters geekOutMasters;
-    private int flagPlay=0, flagDice=0, power=0, flagAction=0, round=1, totalPoints=0;
+    private int flagPlay=0, flagDice=0, power=0, flagAction=0;
     private int[] faces;
     private Header headerProject;
     private JPanel[] panelsToUse;
     private Listener listener;
-    private JTextArea yourScoreMessage;
+    private JLabel scoreTable;
+
 
     /**
      * Constructor of GUI class
@@ -76,14 +77,17 @@ public class GUIGridBagLayout extends JFrame
         geekOutMasters=new GeekOutMasters();
 
         //Set up JComponents
+        diceImage=new ImageIcon(Objects.requireNonNull(getClass().getResource("/resources/scoreTable.jpg")));
+        scoreTable=new JLabel(diceImage);
         /*
          * Panel creation
          */
-        panelsToUse=new JPanel[3];
+        panelsToUse=new JPanel[4];
 
         panelsToUse[0]=new JPanel();//This is the inactive dice panel.
         panelsToUse[1]=new JPanel();//This is the dice used panel.
-        panelsToUse[2]=new JPanel();//this is your dice panel.
+        panelsToUse[2]=new JPanel();//This is your dice panel.
+        panelsToUse[3]=new JPanel();//This is score dice panel
 
         /*
          * Header of interface
@@ -150,8 +154,6 @@ public class GUIGridBagLayout extends JFrame
         dice[8].setIcon(diceImage);
         dice[9].setIcon(diceImage);
 
-
-
         /*
          * Inactive dice panel
          */
@@ -179,32 +181,6 @@ public class GUIGridBagLayout extends JFrame
         add(panelsToUse[1], constraints);
 
         /*
-         * Your score panel
-         */
-        yourScoreMessage=new JTextArea();
-        yourScoreMessage.setPreferredSize(new Dimension(600,400));
-        yourScoreMessage.setBorder(BorderFactory.createTitledBorder("Your Score And The Round You're In."));
-        yourScoreMessage.setText("1 dice = 1 point."
-                                +"\n2 dice = 3 point."
-                                +"\n3 dice = 5 point."
-                                +"\n4 dice = 10 point."
-                                +"\n5 dice = 15 point."
-                                +"\n6 dice = 21 point."
-                                +"\n7 dice = 28 point."
-                                +"\n8 dice = 36 point."
-                                +"\n9 dice = 45 point."
-                                +"\n10 dice = 55 point."
-                                +"\n \nROUND: "+round
-                                +"\n \nTOTAL POINTS: "+totalPoints);
-        yourScoreMessage.setEditable(false);
-        constraints.gridx=2;
-        constraints.gridy=2;
-        constraints.gridwidth=2;
-        constraints.fill=GridBagConstraints.BOTH;
-        constraints.anchor=GridBagConstraints.CENTER;
-        add(yourScoreMessage, constraints);
-
-        /*
          * Your dice panel
          */
         panelsToUse[2]=new JPanel();//Your dice panel
@@ -226,6 +202,20 @@ public class GUIGridBagLayout extends JFrame
         constraints.fill=GridBagConstraints.NONE;
         constraints.anchor=GridBagConstraints.CENTER;
         add(panelsToUse[2], constraints);
+
+        /*
+         * Score Table panel
+         */
+        panelsToUse[3]=new JPanel();//Score Panel
+        panelsToUse[3].setPreferredSize(new Dimension(600,400));
+        panelsToUse[3].setBorder(BorderFactory.createTitledBorder("Score Table"));
+        panelsToUse[3].add(scoreTable);
+        constraints.gridx=2;
+        constraints.gridy=2;
+        constraints.gridwidth=2;
+        constraints.fill=GridBagConstraints.BOTH;
+        constraints.anchor=GridBagConstraints.CENTER;
+        add(panelsToUse[3], constraints);
 
         /*
          * Play Button
@@ -263,25 +253,48 @@ public class GUIGridBagLayout extends JFrame
         public void actionPerformed(ActionEvent e)
         {
             /*
-             * Determine if the player reached the required points.
+             * Determine the state of the game
              */
-            if(round==6 && totalPoints < 30)
+            if(panelsToUse[2].getComponentCount()==0)
             {
                 geekOutMasters.youLose(play, dice, panelsToUse);
                 flagPlay=0;
                 flagDice=0;
-                round=1;
             }
 
             /*
-             * Determine if the player reached the required points.
+             * Counting the faces 42
              */
-            if(round==6 && totalPoints >= 30)
+            int number42=0, numberOfTheDragon=0, otherFaces=0;
+            for(int i=0; i < dice.length; i++)
             {
+                if(dice[i].isEnabled() && faces[i]==1)
+                {
+                    number42++;
+                }
+                if(dice[i].isEnabled() && faces[i]==2)
+                {
+                    numberOfTheDragon++;
+                }
+                if(dice[i].isEnabled() && faces[i]>=3)
+                {
+                    otherFaces++;
+                }
+            }
+            if(number42 > 0 && numberOfTheDragon==0 && otherFaces==0 && flagDice==1)
+            {
+                JOptionPane.showMessageDialog(null, "Congratulations, look how dices '42' you have and compare with the score table "
+                        +"\n \n(do not close this window without having counted the dice).");
                 geekOutMasters.youWin(play, dice, panelsToUse);
                 flagPlay=0;
                 flagDice=0;
-                round=1;
+            }
+
+            if(number42 > 0 && numberOfTheDragon > 0 && otherFaces==0)
+            {
+                geekOutMasters.youLose(play, dice, panelsToUse);
+                flagPlay=0;
+                flagDice=0;
             }
 
             /*
@@ -358,22 +371,10 @@ public class GUIGridBagLayout extends JFrame
             }
 
             /*
-             * Determine the state of the game
-             */
-            if(panelsToUse[2].getComponentCount()==0)
-            {
-                geekOutMasters.youLose(play, dice, panelsToUse);
-                flagPlay=0;
-                flagDice=0;
-                round++;
-            }
-
-            /*
              * Get action
              */
             if(flagDice==1)
             {
-
                 /*
                  * Dice 1 button
                  */
@@ -397,8 +398,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -431,8 +430,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -458,8 +455,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -485,8 +480,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -529,8 +522,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -563,8 +554,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -590,8 +579,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -617,8 +604,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -660,8 +645,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -694,8 +677,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -721,8 +702,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -748,8 +727,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -791,7 +768,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -824,8 +800,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -851,8 +825,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -878,8 +850,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -921,8 +891,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -955,8 +923,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -982,8 +948,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1009,8 +973,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1052,8 +1014,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1086,8 +1046,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1113,8 +1071,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1140,8 +1096,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1183,8 +1137,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1217,8 +1169,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1244,8 +1194,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1271,8 +1219,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1314,8 +1260,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1348,8 +1292,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1375,8 +1317,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1402,8 +1342,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1445,8 +1383,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1479,8 +1415,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1506,8 +1440,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1534,8 +1466,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1577,8 +1507,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1611,8 +1539,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1638,8 +1564,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1666,8 +1590,6 @@ public class GUIGridBagLayout extends JFrame
                                 geekOutMasters.youLose(play, dice, panelsToUse);
                                 flagPlay=0;
                                 flagDice=0;
-                                round++;
-                                yourScoreMessage.updateUI();
                                 break;
                             }
                             else
@@ -1991,6 +1913,17 @@ public class GUIGridBagLayout extends JFrame
             if(e.getSource()==exit)
             {
                 System.exit(0);
+            }
+            /*
+             * Updating each GUI component
+             */
+            //All panels
+            for (JPanel jPanel : panelsToUse) {
+                jPanel.updateUI();
+            }
+            //All dices
+            for (JButton die : dice) {
+                die.updateUI();
             }
         }
     }

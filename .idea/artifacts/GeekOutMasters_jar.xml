@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="GeekOutMasters:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/GeekOutMasters_jar</output-path>
+    <root id="archive" name="GeekOutMasters.jar">
+      <element id="module-output" name="GeekOutMasters" />
+    </root>
+  </artifact>
+</component>

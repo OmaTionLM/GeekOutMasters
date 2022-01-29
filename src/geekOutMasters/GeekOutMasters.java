@@ -1,11 +1,6 @@
 package geekOutMasters;
 
 import javax.swing.*;
-import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.image.AffineTransformOp;
-import java.lang.reflect.AccessibleObject;
-import java.net.http.WebSocket;
 import java.util.Objects;
 import java.util.Random;
 
@@ -55,91 +50,6 @@ public class GeekOutMasters
         faces[9]=dice[9].getVisibleFace();
     }
 
-    /**
-     * 1 dice= 1 point
-     * 2 dice= 3 points
-     * 3 dice= 6 points
-     * 4 dice= 10 points
-     * 5 dice= 15 points
-     * 6 dice= 21 points
-     * 7 dice= 28 points
-     * 8 dice= 36 points
-     * 9 dice= 45 points
-     * 10 dice= 55 points
-     */
-    public int determinatePoints(int[] AFaces, JPanel[] APanel, int points)
-    {
-        /*
-        * Getting the numbers of 42 and Dragon
-         */
-        int numberOfTheDragons=0, numberOfThe42=0, otherNumbers=0;
-        for(int i=0; i < AFaces.length; i++)
-        {
-            if(AFaces[i]==1)
-            {
-                numberOfThe42++;
-            }
-            if(AFaces[i]==2)
-            {
-                numberOfTheDragons++;
-            }
-            if((AFaces[i]==3) || (AFaces[i]==4) || (AFaces[i]==5) || (AFaces[i]==6) )
-            {
-                otherNumbers++;
-            }
-        }
-
-        /*
-        * Assign points
-         */
-        if(numberOfThe42 > 0 && numberOfTheDragons==0 && otherNumbers==0)
-        {
-            if(numberOfThe42==1)
-            {
-                points=1;
-            }
-            if(numberOfThe42==2)
-            {
-                points=3;
-            }
-            if(numberOfThe42==3)
-            {
-                points=6;
-            }
-            if(numberOfThe42==4)
-            {
-                points=10;
-            }
-            if(numberOfThe42==5)
-            {
-                points=15;
-            }
-            if(numberOfThe42==6)
-            {
-                points=21;
-            }
-            if(numberOfThe42==7)
-            {
-                points=28;
-            }
-            if(numberOfThe42==8)
-            {
-                points=36;
-            }
-            if(numberOfThe42==9)
-            {
-                points=45;
-            }
-            if(numberOfThe42==10)
-            {
-                points=55;
-            }
-
-            JOptionPane.showMessageDialog(null, "Congratulations for your points obtained in this round. Press the Play button to start the next round.");
-        }
-        return points;
-    }
-
     /*
     * "You Lose" is a method
      */
@@ -165,7 +75,6 @@ public class GeekOutMasters
      */
     public void youWin(JButton playButton, JButton[] ADice, JPanel[] APanels)
     {
-        JOptionPane.showMessageDialog(null, "You win, congratulations!!! \n \n Press the play button to start five new rounds.");
         for(int i=0; i < ADice.length; i++)
         {
             APanels[0].removeAll();
